@@ -7,11 +7,18 @@ let logger = require('morgan');
 let fs=require('fs');
 let bodyParser = require('body-parser');
 let app = express();
+
+
+
 let log4js=require('log4js');
 let log4jsConf=require('./config/logConf.json');
 log4js.configure(log4jsConf);
 let logg = log4js.getLogger('log_date');
 app.use(log4js.connectLogger(logg, { level: 'auto' }));
+
+let rsclient=require('./lib/rsclient.js');
+let rtcp=require('./config/rtcp.json');
+rsclient(rtcp);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

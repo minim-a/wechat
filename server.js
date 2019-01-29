@@ -1,11 +1,10 @@
 /**
  * Created by merci on 2016/11/9.
  */
-let client=require('./lib/rsclient.js');
-let rtcp=require('./config/rtcp.json');
+// let rsclient=require('./lib/rsclient.js');
+// let rtcp=require('./config/rtcp.json');
 let _= require('underscore');
 module.exports=function(config){
-    client(rtcp);
     let app = require('./app');
     let debug = require('debug')('web:server');
     let http = require('http');

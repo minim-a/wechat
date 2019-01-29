@@ -22,7 +22,7 @@ Visitor.setup = function () {
 };
 
 /**
- *  ÏòÔ±¹¤ÍÆËÍ£¬ĞÂµÄÔ¤Ô¼ÏûÏ¢
+ *  å‘å‘˜å·¥æ¨é€ï¼Œæ–°çš„é¢„çº¦æ¶ˆæ¯
  *
  * @param data
  */
@@ -71,7 +71,7 @@ function pushTemplateMessage(data){
         }
     ],function(err,results){
         if(err){
-            let err='Æ½Ì¨ÍÆÀ´µÄ visitor.record.createÏûÏ¢'+err;
+            let err='å¹³å°æ¨æ¥çš„ visitor.record.createæ¶ˆæ¯'+err;
             unit.err(err);
         }else{
             let ret1=results[0];
@@ -93,15 +93,15 @@ function pushTemplateMessage(data){
                 color: '#173177'
             };
 
-            let msg=" ·Ã¿Í "+ret1.visitorName+" Ïò "+ret2.employeeName;
-            // ÏòÔ±¹¤£¨±»Ô¼ÈË£©ÍÆËÍÔ¤Ô¼ÏûÏ¢
+            let msg=" è®¿å®¢ "+ret1.visitorName+" å‘ "+ret2.employeeName;
+            // å‘å‘˜å·¥ï¼ˆè¢«çº¦äººï¼‰æ¨é€é¢„çº¦æ¶ˆæ¯
             let tempId = "Eteyx38JqQ-XXcXLJvlK3nWqMeh7my5AY4zUAvkB6Mw";
             Wechat.pushTemplateMessage(ret2.employeeWechatId, tempId, data, renderUrl)
                 .then(function (result) {
-                    msg+= " ÍÆËÍÔ¤Ô¼ÏûÏ¢ resutl:"+JSON.stringify(result);
+                    msg+= " æ¨é€é¢„çº¦æ¶ˆæ¯ resutl:"+JSON.stringify(result);
                     unit.log(msg);
                 }).catch(function (err) {
-                msg+=" ÍÆËÍÔ¤Ô¼ÏûÏ¢ err:"+JSON.stringify(err);
+                msg+=" æ¨é€é¢„çº¦æ¶ˆæ¯ err:"+JSON.stringify(err);
                 unit.err(msg);
             })
         }
