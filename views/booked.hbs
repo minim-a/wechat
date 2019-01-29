@@ -1,0 +1,103 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/style.css"/>
+
+</head>
+<body ontouchstart>
+<script>
+    function toConfirm(id) {
+        let status = document.getElementById(id);
+        status.value='yes';
+
+    }
+    function toRefuse(id) {
+        let status = document.getElementById(id);
+        status.value='no';
+    }
+</script>
+<div class="topItem">
+    <form class="form-horizontal"  action="/invite/invite" method="post" >
+        <input type="text" name="data"  value="{{employeeData}}" style="display:none">
+        <div class="weui-flex" style="margin: 5px">
+            <div class="weui-flex__item" align="right">
+                <button class="weui-btn weui-btn_default" type="submit" class="btn"> 邀 访 </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div>
+    {{#each paramSet }}
+        <div style="margin: 5px;background:#f5f5f5;border-radius:5px; ">
+            <form   name="form" action="/employee/ack" method="post" >
+                <div class="weui-form-preview__item weui-cell">
+                    <div class="weui-cell__hd">访客姓名：</div>
+                    <div class="weui-cell__bd" style="width: auto">
+                        <label>
+                            <input class="weui-input" type="text"  name="visitorName" value="{{visitorName}}" readonly="readonly"/>
+                        </label>
+                    </div>
+                </div>
+                <div class="weui-form-preview__item weui-cell">
+                    <div class="weui-cell__hd">来访时间：</div>
+                    <div class="weui-cell__bd" style="width: auto">
+                        <input class="weui-input" type="text" name="beginTime" value="{{visitorTime}}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="weui-form-preview__item weui-cell">
+                    <div class="weui-cell__hd">访客手机：</div>
+                    <div class="weui-cell__bd" style="width: auto">
+                        <input class="weui-input" type="text"  name="visitorTel" value="{{visitorTel}}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="weui-form-preview__item weui-cell">
+                    <div class="weui-cell__hd">来访人数：</div>
+                    <div class="weui-cell__bd" style="width: auto">
+                        <input class="weui-input" type="text" name="visitorNumber" value="{{visitorNumber}}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="weui-form-preview__item weui-cell">
+                    <div class="weui-cell__hd">访问事由：</div>
+                    <div class="weui-cell__bd" style="width: auto">
+                        <input class="weui-input" type="text"  name="reasons" value="{{reasons}}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="weui-form-preview__item weui-cell">
+                    <div class="weui-cell__hd">访客单位：</div>
+                    <div class="weui-cell__bd" style="width: auto">
+                        <input class="weui-input" type="text"  name="company" value="{{company}}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="weui-form-preview__item">
+                    <input type="text" name="status"  id='{{id}}' value="{{status}}" style="display:none">
+                    <input type="text" name="data" value="{{data}}" style="display:none">
+                </div>
+                <div class="weui-form-preview__ft" style="width: auto">
+                    <div class="weui-flex__item " align="center" style="display:{{refuseBtShow}}">
+                        <button class="weui-btn weui-btn_mini weui-btn_warn" type="submit" onclick="toRefuse('{{id}}');"
+                        id='refuseBt' >{{refuseBt}}</button>
+                    </div>
+                    <div class="weui-flex__item" align="center" style="display:{{confirmBtShow}}">
+                        <button class="weui-btn weui-btn_mini weui-btn_primary" type="submit" onclick="toConfirm('{{id}}')"
+                        id ='confirmBt'>{{confirmBt}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {{/each}}
+</div>
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link"> 被约信息 web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+</body>

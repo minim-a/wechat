@@ -1,0 +1,126 @@
+/**
+ * Created by merci on 2016/9/19.
+ */
+var client=require('./client.js');
+var _=require('underscore');
+module.exports=function(config,pattern,host,model){
+    if(_.isNull(model)|| _.isUndefined(model)){
+        model=function(){};
+    }
+    //属性注入
+    model.config=config;
+    model.host={};
+    _.extend(model.host,host);
+    //接口注入
+    if(!_.has(model,'create')){
+        model.create = function(data, cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='create';
+            request.param=data;
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'upsert')){
+        model.upsert = model.updateOrCreate = function upsert(data, cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='upsert';
+            request.param=data;
+            client.sin(host,request,cb);
+        };
+    }
+    model.findOrCreate = function findOrCreate(query, data, cb) {
+        cb('not support findOrCreate operation');
+    };
+    if(!_.has(model,'exists')){
+        model.exists = function exists(id, cb) {
+            if(_.isNull(id)|| _.isUndefined(id)){
+                return cb('invalidate id');
+            }
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='exist';
+            request.param={id:id};
+            client.sin(host,request,function(err,result){
+                if(err){
+                    return cb(err);
+                }
+                cb(err,result.result);
+            });
+        };
+    }
+    if(!_.has(model,'findById')){
+        model.findById = function find(id, cb) {
+            if(_.isNull(id)|| _.isUndefined(id)){
+                return cb('invalidate id');
+            }
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='findById';
+            request.param={id:id};
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'find')){
+        model.find = function find(cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='find';
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'findOne')){
+        model.findOne = function findOne(cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='findOne';
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'delete')){
+        model.delete=model.destroyAll = function destroyAll(where, cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='clear';
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'update')){
+        model.update=model.updateAll = function updateAll(data, cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='update';
+            request.param=data;
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'destroyById')){
+        model.destroyById = function deleteById(id, cb) {
+            if(_.isNull(id)|| _.isUndefined(id)){
+                return cb('invalidate id');
+            }
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='delete';
+            request.param={id:id};
+            client.sin(host,request,cb);
+        };
+    }
+    if(!_.has(model,'count')){
+        model.count = function(cb) {
+            var request={};
+            _.extend(request,pattern);
+            request.cmd='count';
+            client.sin(host,request,function(err,result){
+                if(err){
+                    return cb(err);
+                }
+                cb(err,result.size)
+            });
+        };
+    }
+    return model;
+};
+
+

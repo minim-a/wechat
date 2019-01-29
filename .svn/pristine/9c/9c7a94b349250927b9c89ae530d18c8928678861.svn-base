@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>员工信息</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/weui.min.css"/>
+</head>
+<body ontouchstart>
+<div align="center">
+    <h2>员工信息</h2>
+</div>
+<form class="weui-cells_form"  name="form" action="{{action}}" method="post">
+
+    <div class="weui-cell">
+        <input class="weui-input" type="tel" placeholder="请填写您的手机号"  name="phone" value="{{phone}}">
+    </div>
+
+    <div class="weui-cell">
+        <label>
+            <input type="text" name="data" value="{{data}}" style="display:none">
+        </label>
+    </div>
+    <div class="weui-flex">
+
+        <div class="weui-flex__item" align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_default" type="submit" class="btn">绑定{{btn}}</button>
+        </div>
+    </div>
+</form>
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link">Employee web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+
+</body>

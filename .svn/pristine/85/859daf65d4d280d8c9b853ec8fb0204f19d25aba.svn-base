@@ -1,0 +1,72 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "generic-cache",
+        "scope": null,
+        "escapedName": "generic-cache",
+        "name": "generic-cache",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "F:\\NVMS\\NVMS6.0\\src\\trunk\\web"
+    ]
+  ],
+  "_from": "generic-cache@latest",
+  "_id": "generic-cache@0.1.0",
+  "_inCache": true,
+  "_location": "/generic-cache",
+  "_nodeVersion": "0.12.7",
+  "_npmUser": {
+    "name": "jakub.knejzlik",
+    "email": "jakub.knejzlik@gmail.com"
+  },
+  "_npmVersion": "2.14.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "generic-cache",
+    "scope": null,
+    "escapedName": "generic-cache",
+    "name": "generic-cache",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/message/cache"
+  ],
+  "_resolved": "https://registry.npmjs.org/generic-cache/-/generic-cache-0.1.0.tgz",
+  "_shasum": "d886022486cfcdc64c7654cc1471c778ed497375",
+  "_shrinkwrap": null,
+  "_spec": "generic-cache",
+  "_where": "F:\\NVMS\\NVMS6.0\\src\\trunk\\web",
+  "dependencies": {
+    "underscore": "x",
+    "unit-converter": "x"
+  },
+  "description": "Generic memory cache",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "d886022486cfcdc64c7654cc1471c778ed497375",
+    "tarball": "https://registry.npmjs.org/generic-cache/-/generic-cache-0.1.0.tgz"
+  },
+  "keywords": [
+    "cache,caching,generic,memory"
+  ],
+  "maintainers": [
+    {
+      "name": "jakub.knejzlik",
+      "email": "jakub.knejzlik@gmail.com"
+    }
+  ],
+  "name": "generic-cache",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "version": "0.1.0"
+}

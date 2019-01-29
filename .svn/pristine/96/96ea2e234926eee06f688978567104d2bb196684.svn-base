@@ -1,0 +1,85 @@
+
+module.exports=Visitor;
+var _=require('underscore');
+var client =require('../lib/client.js');
+
+function Visitor() {
+
+}
+Visitor.setup = function () {
+    if (!_.has(Visitor,'init')){
+        let config=require('../config/seneca.json');
+        let host={};
+        _.extend(host,require('../config/host.json'));
+        host.pin="field:visitor,role:manager";
+        let pattern={field:'visitor',role:'manager'};
+        let setup  =require('../lib/setup.js');
+        let bridge =require('../lib/bridge.js');
+        var model  =bridge(config,pattern,host,Visitor);
+        setup(Visitor,model);
+        Visitor.init=true;
+    }
+};
+
+Visitor.queryUsers = function (name, phone, cb) {
+    let param={};
+    param.name=name;
+    param.phone=phone;
+    let pattern={field:'visitor',role:'manager',cmd:'query',param:param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.queryFromPhone = function (phone, cb) {
+    let param={};
+    param.phone=phone;
+    let pattern={field:'visitor',role:'manager',cmd:'query',param:param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.queryWechatId = function (id, cb) {
+    let param={};
+    param.wechat=id;
+    let pattern={field:'visitor',role:'manager',cmd:'query',param:param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.queryFromId = function (id, cb) {
+    let param={};
+    param.id=id;
+    let pattern={field:'visitor',role:'manager',cmd:'query',param:param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.findUsers = function(cb){
+    var pattern={field:'visitor',role:'manager',cmd:'find'};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.createUser = function(name,phone,wechatId,cb){
+    let param={};
+    param.name=name;
+    param.phone=phone;
+    param.email='qq@qq.com';
+    param.description='';
+    param.wechat=wechatId;
+    let pattern={field:'visitor',role:'manager',cmd:'create',param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.updateUser =function(id,name,phone,cb){
+    let param = {};
+    param.id=id;
+    param.name=name;
+    param.phone=phone;
+    var pattern={field:'visitor',role:'manager',cmd:'update',param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.delUser =function(id,cb){
+    var param = {};
+    param.id=id;
+    var pattern={field:'visitor',role:'manager',cmd:'delete',param};
+    client.sin(Visitor.host,pattern,cb);
+};
+
+Visitor.setup();

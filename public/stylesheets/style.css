@@ -1,0 +1,17 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.topItem{
+  z-index: 10;
+  position: fixed;
+  left: 0;
+  top:0;
+  right: auto;
+  width: 100%;
+}

@@ -1,0 +1,55 @@
+/**
+ * Created by merci on 2016/8/5.
+ */
+
+module.exports=Client;
+
+function Client(){
+
+}
+Client.init=function(){
+    if(!Client._init){
+        Client._ins=new Array();
+        Client._init=true;
+    }
+}
+Client.pin=function(config){
+    var client=Client._ins[config.pin];
+    if(!client){
+        client=require('seneca')(require('../config/seneca.json')).use('redis-transport').client(config);
+        Client._ins[config.pin]=client;
+    }
+   return client;
+}
+Client.sin=function(config,pattern,callback){
+    if(pattern.sid){
+        return Client.act(config,pattern,callback);
+    }
+    var seneca=Client.pin(config);
+    var req={field:pattern.field,role:pattern.role};
+    seneca.act(req,function(err,result){
+        if(err){
+            return callback(err);
+        }
+        if(!result.sid){
+            return callback('the remote service response without sid');
+        }
+        var request={};
+        request.field=pattern.field;
+        request.role=pattern.role;
+        request.sid=result.sid;
+        request.cmd=pattern.cmd;
+        request.param=pattern.param;
+        seneca.act(request,function(err,result){
+            callback(err,result);
+        });
+    });
+}
+
+Client.act=function(config,pattern,callback){
+    var seneca=Client.pin(config);
+    seneca.act(pattern,function(err,result){
+        callback(err,result);
+    });
+};
+Client.init();

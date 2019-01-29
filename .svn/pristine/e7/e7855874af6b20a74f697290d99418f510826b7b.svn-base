@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<head>
+    <title> 进行预约</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="/stylesheets/weui.css"/>
+    <link rel="stylesheet" href="/stylesheets/weuix.css"/>
+    <script src="/javascripts/zepto.min.js"></script>
+    <script src="/javascripts/zepto.weui.js"></script>
+
+</head>
+<body ontouchstart>
+<div align="center">
+    <h2>请填写预约信息</h2>
+</div>
+<script>
+    function toQuery() {
+        document.form.action="/visitor/queryEmployee";
+        document.form.submit();
+    }
+    function toMyInfo() {
+        document.form.action="/visitor/enterVisitor";
+        document.form.submit();
+    }
+
+</script>
+<form class="weui-cells_form"  name="form" action="/visitor/createRecord" method="post" >
+    <div class="weui-cell">
+        <input class="weui-input" type="tel"  placeholder="请填写被访人的手机号码"
+               name="phone" value="{{phone}}"
+               onchange="toQuery();">
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="text" placeholder="自动匹配被访人姓名"
+               name="name" value="{{name}}"/>
+    </div>
+
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="number" placeholder="请填写访问人数" name="numberOfPeople" value="{{numberOfPeople}}"/>
+        </div>
+        <div class="weui-cell__hd" >
+            <select class="weui-select" name="select">
+                <option  value="1">参观公司</option>
+                <option value="2">业务洽谈</option>
+                <option value="2">参见面试</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label for="beginTimeId" class="weui-label">到访时间:</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" name ='beginTime' id="beginTimeId" type="text" value="">
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <input type="text" name="data" value="{{data}}" style="display:none">
+    </div>
+
+    <div class="weui-flex">
+        <div class="weui-flex__item " align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_default" type="submit" onclick="toMyInfo();">我的信息</button>
+        </div>
+        <div class="weui-flex__item" align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_primary" type="submit" >预  约</button>
+        </div>
+    </div>
+</form>
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link"> 预 约 web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+</body>
+<script>
+    $("#beginTimeId").datetimePicker({
+        title: '',
+        yearSplit: '/',
+        monthSplit: '/',
+        dateSplit: '',
+        times: function () {
+            return [
+                {
+                    values: (function () {
+                        var hours = [];
+                        for (var i=0; i<24; i++) hours.push(i > 9 ? i : '0'+i);
+                        return hours;
+                    })()
+                },
+                {
+                    divider: true,
+                    content: ':'
+                },
+                {
+                    values: (function () {
+                        var minutes = [];
+                        for (var i=0; i<59; i++) minutes.push(i > 9 ? i : '0'+i);
+                        return minutes;
+                    })()
+                }
+            ];
+        },
+        onChange: function (picker, values, displayValues) {
+            console.log(values);
+        }
+    });
+    // $('#begintime').on('focus', function () {
+    //     var dt = new Date();
+    //     var df= [dt.getFullYear(), (dt.getMonth() + 1), dt.getDate()];
+    //     var id=dt.getFullYear()+""+dt.getMonth() +""+dt.getDate()+""+dt.getHours()+""+ dt.getMinutes()+""+dt.getSeconds();
+    //
+    //     var value=$.trim($("#begintime").val());
+    //     if(value!="")
+    //     {
+    //         var arrays = value.split("-");
+    //         df= [parseInt(arrays[0]), parseInt(arrays[1]), parseInt(arrays[2])];
+    //     }
+    //
+    //     weui.datePicker({
+    //         id: "start"+id,
+    //         start: 2000,
+    //         end: dt.getFullYear()+20,
+    //         defaultValue:df,
+    //         onConfirm: function (result) {
+    //             $("#begintime").val(result[0].label.replace("年","-") + result[1].label.replace("月","-") + result[2].label.replace("日",""));
+    //             $("#begintime").val("");
+    //         }
+    //     });
+    // });
+</script>

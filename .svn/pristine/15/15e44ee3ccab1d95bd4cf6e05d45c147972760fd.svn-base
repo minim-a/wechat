@@ -1,0 +1,316 @@
+let express = require('express');
+let router = express.Router();
+let _=require('underscore');
+let Promise = require('bluebird');
+let request = Promise.promisify(require('request'));
+let xml2js = require('xml2js');
+let config = require('../config/wechat.json');
+let Wechat = require('../models/wechat');
+let sha1 = require('sha1');
+let Visitor = require('../models/visitor.js');
+let Employee =require('../models/employee.js');
+let Record   =require('../models/record.js');
+let users    =require('../models/users.js');
+let async=require('async');
+let unit =require('../models/unit.js');
+
+/**
+ * 生成随机字符串
+ * @returns {string}
+ */
+let createNonce = function () {
+    return Math.random().toString(36).substr(2, 15);
+};
+/**
+ * 生成时间戳
+ * @returns {number}
+ */
+let createTimestamp = function () {
+    return parseInt(new Date().getTime() / 100, 10) + '';
+};
+
+/**
+ *  签名
+ * @param ticket
+ * @param noncestr
+ * @param timestamp
+ * @param url
+ * @returns {*}
+ * @private
+ */
+function _sign(ticket, noncestr, timestamp, url) {
+    let JsApiTicket='jsapi_ticket=TICKET&noncestr=NONCESTR&timestamp=TIMESTAMP&url=URL';
+    let str = JsApiTicket.replace('TICKET',ticket).replace('NONCESTR',noncestr)
+        .replace('TIMESTAMP',timestamp).replace('URL',url);
+    return sha1(str);
+}
+
+/**
+ * 响应微信发送的Token验证
+ */
+router.get('/', function (req,res,next) {
+    const signature = req.query.signature || '';
+    const nonce = req.query.nonce || '';
+    const timestamp = req.query.timestamp || '';
+    const echostr = req.query.echostr || '';
+    const token = config.token || '';
+    const str = [token,timestamp,nonce].sort().join('');
+    const sha = sha1(str);
+    if (sha === signature){
+        return res.status(200).send(req.query.echostr)
+    }
+    return res.render('index', {
+        createTime: new Date()
+    });
+} );
+
+/**
+ *  公众号的菜单请求，获取用户授权
+ */
+router.get('/redirect',function (req,res,next) {
+    let subjoin=req.query.subjoin;
+    res.redirect(Wechat.getWxCodeUrl(subjoin));
+});
+
+/**
+ *  授权后，获取用户信息
+ */
+router.get('/oauth',function (req,res,next) {
+    let code =req.query.code;
+    let subjoin=req.query.state;
+    console.log("cond :"+code);
+    Wechat.getOauth2Token(code,subjoin)
+        .then(function (response) {
+            let body=JSON.parse(response.body);
+            let openId=body.openid;
+            let subjoin=response.subjoin;
+            switch (subjoin) {
+                case '1':
+                    toVisitor(res,openId);
+                    break
+                case '2':
+                    toEmployee(res,openId);
+                    break
+            }
+        })
+        .catch(function (err) {
+
+        });
+
+})
+/**
+ * 转向访客户流程
+ *  查询访客是否绑定微信号
+ * @param wechatId
+ */
+function toVisitor(res,wechatId){
+    Visitor.queryWechatId(wechatId,function (err,result) {
+        if (!err) {
+            if (_.isEmpty(result)){
+                // 当访客户没有注册，转向注册
+                let param={};
+                let data={};
+                data.wechatId=wechatId;
+                param.action="/visitor/create";
+                param.name="";
+                param.phone="";
+                param.show="none";
+                param.btn="注册信息";
+                param.data=JSON.stringify(data);
+                res.render('visitor',param);
+            }else{
+                let param={};
+                let data={};
+                // 当访客户注册，转向更新
+                param.action="/visitor/update";
+                param.name=result[0].name;
+                param.phone=result[0].phone;
+                param.wechatId=result[0].wechat;
+                param.btn="确认修改";
+                data.wechatId=wechatId;
+                data.userId=result[0].id;
+                param.data=JSON.stringify(data);
+                res.render('visitor',param);
+            }
+        }else{
+            res.send(err.details);
+        }
+    })
+}
+
+
+/**
+ * 转向员工流程
+ *  查询员工是否绑定微信号
+ * @param wechatId
+ */
+function toEmployee(res,wechatId){
+    Employee.queryFromWechatId(wechatId,function (err,result) {
+        if (err){
+            unit.showError(res,'查询员工ID失败',err);
+        }else{
+            if (_.isEmpty(result)){
+                // 转向绑定
+                let param={};
+                param.action="/employee/bind";
+                let data={};
+                data.wechatId=wechatId;
+                param.data=JSON.stringify(data);
+                res.render("employee",param);
+            }else{
+                // 已绑定时，查询预约列表
+                let employeeId=result[0].id;
+                let employeeName=result[0].name;
+                let employeeWechatId=result[0].wechat;
+                let employeeData={};
+                employeeData.employeeId=employeeId;
+                employeeData.employeeName=employeeName;
+                employeeData.employeeWechatId=employeeWechatId;
+                Record.queryBooked(employeeId,function (err,result) {
+                    if (!err){
+                        let paramData={};
+                        let paramSet=new Array();
+                        paramData.employeeData=JSON.stringify(employeeData);
+                        if (!_.isEmpty(result)){
+                            for (let i in result){
+                                let param={};
+                                let data={};
+                                data.id=result[i].id;
+                                data.visitorId=result[i].visitor.id;
+                                data.employeeId=result[i].employee.id;
+                                data.employeeName=result[i].employee.name;
+                                data.begin=result[i].begin;
+                                data.end  =result[i].end;
+                                data.status=result[i].status;
+                                param.visitorName=result[i].visitor.name;
+                                param.visitorTime='';
+                                param.visitorTel='';
+                                param.visitorNumber='';
+                                param.reasons='';
+                                param.company='';
+                                let status =result[i].status;
+                                param.status=status;
+                                data.orgStatue=status;
+                                param.confirmBt='同 意';
+                                param.refuseBt='拒 绝';
+                                param.refuseBtShow='inline';
+                                param.confirmBtShow='inline';
+                                if (status === 'yes'){
+                                    param.confirmBt='已确认';
+                                    param.refuseBtShow="none";
+                                }else{
+                                    if (status === 'no'){
+                                        param.confirmBtShow="none";
+                                        param.refuseBt='已拒绝';
+                                    }
+                                }
+                                param.id=result[i].id;
+                                 /*  ******************/
+                                /* 获取 访客&员工 信息  */
+/*                                let visitorId=result[i].visitor.id;
+                                let employeeId=result[i].employee.id;
+                                async.parallel([
+                                    function(callback){
+                                        Visitor.queryFromId(visitorId, function (err, result) {
+                                            if (err) {
+                                                callback(err);
+                                            } else {
+                                                if (null != result && result.length !== 0) {
+                                                    let ret={};
+                                                    ret.visitorName = result[0].name;
+                                                    ret.visitorTel = result[0].phone;
+                                                    callback(null,ret);
+                                                }else{
+                                                    callback('error query from id failed:'+err);
+                                                }
+                                            }
+                                        });
+                                    },
+                                    function(callback){
+                                        Employee.queryFromId(employeeId, function (err, result) {
+                                            if (err) {
+                                                callback(err);
+                                            } else {
+                                                if (null != result) {
+                                                    let ret={};
+                                                    ret.employeeWechatId=result[0].wechat;
+                                                    callback(null,ret);
+                                                }else{
+                                                    callback('error query from id failed:'+err);
+                                                }
+                                            }
+                                        });
+                                    }
+                                ],function(err,results){
+                                    if(err){
+                                        unit.showError(res,'获取user信息失败'+err);
+                                    }else{
+                                        param.visitorTel=results[0].visitorTel;
+                                        param.data=JSON.stringify(data);
+                                        paramSet.push(param)
+                                    }
+                                });*/
+
+                                /*.....................**/
+                                param.data=JSON.stringify(data);
+                                paramSet.push(param)
+                            }
+                            paramData.paramSet=paramSet;
+                        }
+                        // 进入被约信息界面
+                        res.render("booked",paramData);
+                    }
+                })
+
+            }
+        }
+    })
+}
+
+router.post('/', function (req,res,next){
+    this.res = res;
+    var self = this;
+    var buf = '';
+    req.setEncoding('utf-8');
+    req.on('data', function(chunk) {
+        buf += chunk;
+    });
+    req.on('end', function() {
+        xml2js.parseString(buf, function(err, json) {
+            if (err) {
+                err.status = 400;
+            } else {
+                req.body = json;
+            }
+        });
+        self.data = req.body.xml;
+        //  self.parse();
+    });
+});
+
+router.post('/wechat',function (req,res,next) {
+    console.log(":"+req.body);
+});
+
+router.get('/fetchTicket',function (req,res,net) {
+    let url=req.query.url;
+    let appId=config.appId;
+    Wechat.fetchTicket()
+        .catch(function (err) {
+            res.status(500).send(err);
+        })
+        .then(function (result) {
+            let ticket=result.ticket;
+            let noncestr = createNonce();
+            let timestamp = createTimestamp()
+            let signature = _sign(ticket,noncestr,timestamp,url);
+            res.status(200).send({
+                url: url,
+                noncestr: noncestr,
+                timestamp: timestamp,
+                signature: signature,
+                appid:appId,
+            });
+        });
+});
+module.exports = router;

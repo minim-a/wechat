@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>邀约客户</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="/stylesheets/weui.css"/>
+    <link rel="stylesheet" href="/stylesheets/weuix.css"/>
+    <script src="/javascripts/zepto.min.js"></script>
+    <script src="/javascripts/zepto.weui.js"></script>
+</head>
+<body ontouchstart>
+<script>
+    function toQuery() {
+        document.form.action="/invite/queryVisitor";
+        document.form.submit();
+    }
+</script>
+<div align="center">
+    <h2>邀访人信息</h2>
+</div>
+<form class="weui-cells_form"  name="form" action="/invite/toInvite" method="post">
+
+    <div class="weui-cell">
+        <input class="weui-input" type="tel" placeholder="邀访人的手机号"  name="visitorPhone" value="{{visitorPhone}}"
+               onchange="toQuery();">
+    </div>
+
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" placeholder="邀访人的姓名" name="visitorName" value="{{visitorName}}"/>
+        </div>
+        <div class="weui-cell__hd" >
+            <select class="weui-select" name="select2">
+                <option  value="1">男士</option>
+                <option value="2">女士</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label for="beginTimeId" class="weui-label">到访时间:</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" name ='beginTime' id="beginTimeId" type="text" value="">
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <label>
+            <input type="text" name="employeeData" value="{{employeeData}}" style="display:none">
+        </label>
+    </div>
+
+    <div class="weui-flex">
+        <div class="weui-flex__item" align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_primary" type="submit" class="btn"> 确 定 </button>
+        </div>
+    </div>
+</form>
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link">Invite web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+</body>
+<script>
+    $("#beginTimeId").datetimePicker({
+        title: '',
+        yearSplit: '/',
+        monthSplit: '/',
+        dateSplit: '',
+        times: function () {
+            return [
+                {
+                    values: (function () {
+                        var hours = [];
+                        for (var i=0; i<24; i++) hours.push(i > 9 ? i : '0'+i);
+                        return hours;
+                    })()
+                },
+                {
+                    divider: true,
+                    content: ':'
+                },
+                {
+                    values: (function () {
+                        var minutes = [];
+                        for (var i=0; i<59; i++) minutes.push(i > 9 ? i : '0'+i);
+                        return minutes;
+                    })()
+                }
+            ];
+        },
+        onChange: function (picker, values, displayValues) {
+            console.log(values);
+        }
+    });
+</script>

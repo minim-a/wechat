@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>访客系统</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/weui.min.css"/>
+</head>
+<body style="height: auto" ontouchstart>
+<div align="center">
+    <h2>访客信息</h2>
+</div>
+
+<form class="weui-cells_form"  name="form" action="{{action}}" method="post">
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" placeholder="您的姓名" name="name" value="{{name}}" required autofocus/>
+        </div>
+        <div class="weui-cell__hd" >
+            <select class="weui-select" name="select2">
+                <option  value="1">男士</option>
+                <option value="2">女士</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="tel" placeholder="请填写您的手机号"  name="phone" value="{{phone}}">
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="text" placeholder="请填写您公司名称"  name="phone" value="{{company}}">
+    </div>
+
+    <div class="weui-cell">
+        <input type="text" name="data" value="{{data}}" style="display:none">
+    </div>
+
+    <div class="weui-flex">
+        <div class="weui-flex__item " align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_default" style="display:{{show}};" onclick="toAppointment();">预约</button>
+        </div>
+        <div class="weui-flex__item" align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_default" type="submit" class="btn">确认{{btn}}</button>
+        </div>
+    </div>
+</form>
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="javascript:home();" class="weui-footer__link">Visitor web</a>
+    </p>
+    <p class="weui-footer__text">Copyright &copy; 2019-2029 </p>
+</div>
+
+
+</body>
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+    !function(){
+        let targetUrl=location.href.split("#")[0];
+        let url = "http://" + location.host + "/wechat/fetchTicket";
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            data: {
+                url:targetUrl,
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("发生错误：" + errorThrown);
+            },
+            success : function(data){
+                init(data)
+            }
+        });
+    }();
+
+    function init(data) {
+        wx.config({
+            debug: false,
+            appId: data.appid,
+            timestamp: data.timestamp,
+            nonceStr: data.noncestr,
+            signature: data.signature,
+            jsApiList: [
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'onMenuShareQZone',
+
+            ]
+        });
+        wx.ready(function () {
+            // wx.checkJsApi({
+            //     jsApiList: [
+            //         'getNetworkType',
+            //         'previewImage'
+            //     ],
+            //     success: function (res) {
+            //         alert(JSON.stringify(res));
+            //     }
+            // });
+            wx.onMenuShareAppMessage({
+                title: '访客邀请',
+                desc: '来来，本人邀请',
+                link: 'http://minima.mynatapp.cc/visitor',
+                imgUrl: 'http://demo.open.weixin.qq.com/jssdk/images/p2166127561.jpg',
+                trigger: function (res) {
+                    // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+                    alert('用户点击发送给朋友');
+                },
+                success: function (res) {
+                    alert('已分享');
+                },
+                cancel: function (res) {
+                    alert('已取消');
+                },
+                fail: function (res) {
+                    alert(JSON.stringify(res));
+                }
+            });
+        });
+
+    }
+
+
+</script>
+
+</html>

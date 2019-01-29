@@ -1,0 +1,209 @@
+let express = require('express');
+let router = express.Router();
+let _=require('underscore');
+let Visitor = require('../models/visitor.js');
+let Employee= require('../models/employee.js');
+let Record  = require('../models/record.js');
+let Wechat  = require('../models/wechat.js');
+let unit    = require('../models/unit.js');
+
+
+router.get('/',function (req,res,next) {
+    let data=JSON.parse(req.body.data);
+    let wechatId=data.wechatId;
+    Employee.queryFromWechatId(wechatId,function (err,result) {
+        if (err){
+            unit.showError(res,'查询员工ID失败',err);
+        }else{
+            if (_.isEmpty(result)){
+                let param={};
+                param.action="/employess/bind";
+                let data={}
+                data.userId=result.id;
+                data.wechatId=wechatId;
+                param.data=data;
+                res.render("employee",param);
+            }else{
+                res.render("visitor_list");
+            }
+        }
+    })
+});
+
+/**
+ *  员工的微信号和手机号绑定
+ */
+router.post('/bind',function (req,res,next) {
+    let data=JSON.parse(req.body.data);
+    let wechatId=data.wechatId;
+    let userId=data.userId;
+    let phone =req.body.phone;
+    if (_.isEmpty(phone) || _.isUndefined(phone)){
+        return;
+    }
+    Employee.queryEmployee(phone,function (err,result) {
+        if (!err){
+            if (_.isEmpty(result)){
+                let param={};
+                param.phone="没有此员工";
+                param.action="visitor/queryEmployee";
+                res.render("employee",param)
+            }else{
+                userId=result[0].id;
+                Employee.bind(userId,wechatId,function (err,result) {
+                    if (err){
+                        unit.showError(res,'绑定失败',err);
+                    }else{
+                        let param={};
+                        let data={};
+                        data.employeeName=result.name;
+                        data.employeeId  =result.id;
+                        data.employeeWechatId=result.wechat;
+                        param.employeeData=data;
+                        param.show='inline';
+                        param.id=result.id;
+                        param.confirmBt='同 意';
+                        param.refuseBt='拒 绝';
+                        param.refuseBtShow='inline';
+                        param.confirmBtShow='inline';
+                        console.log("员工绑定成功");
+                        res.render("booked",param);
+                    }
+                })
+            }
+        }
+    });
+});
+
+/**
+ * 员工对预约的确认（同意 ||　拒绝）
+ *  并向访客推送公众号消息
+ */
+router.post('/ack',function (req,res,next) {
+    let data=JSON.parse(req.body.data);
+    let id=data.id;
+    let statue=req.body.status;
+    let user=data.employeeId;
+    let orgStatue=data.orgStatue;
+    if (orgStatue !== 'new') {
+        if (orgStatue === 'yes'){
+            unit.showHint(res,"已确认了！");
+        }else{
+            unit.showHint(res,'已拒绝了!');
+        }
+        return;
+    }
+    Record.ack(id,statue,user,function (err,result) {
+        if (err){
+            unit.showError(res,'确认失败',err);
+        }else{
+            // 员工确认（拒绝）预约，再获取访客的微信ID,
+            // 转发访客回执单推送
+            let statusValue= result.status === 'yes'?'欢迎来访':'暂不接待';
+            let status     = result.status;
+            let visitorId=result.visitor.id;
+            let beginTime=unit.time2Str(result.begin);
+            let endTime  =unit.time2Str(result.end);
+            let renderUrl="http://minima.mynatapp.cc/visitor/visitTicket?";
+            renderUrl+="code="+result.code;
+            renderUrl+="&";
+            Visitor.queryFromId(visitorId,function (err,result) {
+                if (err){
+                    unit.showError(res,'查询访客失败',err);
+                }else{
+                    if (null != result && result.length !==0 ){
+                        let wechatId=result[0].wechat;
+                        let visitorName=result[0].name;
+                        let visitorTel=result[0].phone;
+                        renderUrl+="beginTime="+beginTime;
+                        renderUrl+="&";
+                        renderUrl+="endTime="+endTime;
+                        renderUrl+="&";
+                        renderUrl+="visitorName="+visitorName;
+                        let data={};
+                        data.status={
+                            value:statusValue,
+                            color:"#173177"
+                        };
+                        data.name={
+                            value:visitorName,
+                            color:"#173177"
+                        };
+                        data.begin={
+                            value:beginTime,
+                            color:"#173177"
+                        };
+                        data.end={
+                            value:endTime,
+                            color:'#173177'
+                        };
+                        // 给访客推送预约回执
+                        let tempId="dR35rdxhq-SWyQ2ci_Mu7x0-JoPBH5RmaOqhwHsML8c";
+                         if (status !== 'yes'){
+                             renderUrl="";
+                         }
+                        Wechat.pushTemplateMessage(wechatId,tempId,data,renderUrl)
+                            .then(function (result) {
+                                console.log(result);
+                                unit.showHint(res,"已将预约情况，回执给客户！");
+                            }).catch(function (err) {
+                            res.send(err);
+                        })
+                    }
+                }
+            })
+        }
+    })
+});
+
+
+/**
+ *  由消息模板转向预约确认（同意 || 拒绝)
+ */
+router.get('/tempMsgToAppointmentConfirming',function (req,res,next) {
+    let id=req.query.id;
+    let visitorTel =req.query.visitorTel;
+    let visitorTime=unit.time2Str(req.query.visitorTime);
+    Record.queryBookedFromId(id,function (err,result) {
+        if (!err){
+            let param={};
+            let data={};
+            if (!_.isEmpty(result)){
+                data.id=result[0].id;
+                data.visitorId=result[0].visitor.id;
+                data.employeeId=result[0].employee.id;
+                data.employeeName=result[0].employee.name;
+                data.begin=result[0].begin;
+                data.end  =result[0].end;
+                param.visitorName=result[0].visitor.name;
+                param.visitorTime=visitorTime;
+                param.visitorTel=visitorTel;
+                param.visitorNumber='';
+                param.reasons='';
+                param.company='';
+                let status =result[0].status;
+                param.status=status;
+                data.orgStatue=status;
+                param.confirmBt='同 意';
+                param.refuseBt='拒 绝';
+                param.refuseBtShow='inline';
+                param.confirmBtShow='inline';
+                if (status === 'yes'){
+                    param.confirmBt='已确认';
+                    param.refuseBtShow="none";
+                }else{
+                    if (status === 'no'){
+                        param.confirmBtShow="none";
+                        param.refuseBt='已拒绝';
+                    }
+                }
+            }
+            param.data=JSON.stringify(data);
+            res.render("book",param);
+        }else{
+            unit.showError(res,'查询预约信息失败',err);
+        }
+    })
+});
+
+module.exports = router;

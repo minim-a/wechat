@@ -1,0 +1,56 @@
+{
+  "_from": "nimn_schema_builder@^1.0.0",
+  "_id": "nimn_schema_builder@1.1.0",
+  "_inBundle": false,
+  "_integrity": "sha1-s3DM9bZH1m5Qstz7INCqEkaM0kc=",
+  "_location": "/nimn_schema_builder",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "nimn_schema_builder@^1.0.0",
+    "name": "nimn_schema_builder",
+    "escapedName": "nimn_schema_builder",
+    "rawSpec": "^1.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^1.0.0"
+  },
+  "_requiredBy": [
+    "/nimnjs"
+  ],
+  "_resolved": "http://registry.npm.taobao.org/nimn_schema_builder/download/nimn_schema_builder-1.1.0.tgz",
+  "_shasum": "b370ccf5b647d66e50b2dcfb20d0aa12468cd247",
+  "_spec": "nimn_schema_builder@^1.0.0",
+  "_where": "E:\\work\\Project\\Platform\\Robot\\Robot2\\wechat\\node_modules\\nimnjs",
+  "author": {
+    "name": "Amit Gupta",
+    "url": "https://github.com/amitguptagwl"
+  },
+  "bugs": {
+    "url": "https://github.com/nimndata/nimnjs-schema-builder/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Build schema from JS object or JSON to feed into nimnjs",
+  "devDependencies": {
+    "browserify": "^16.1.0"
+  },
+  "homepage": "https://github.com/nimndata/nimnjs-schema-builder#readme",
+  "keywords": [
+    "nimn",
+    "nimnjs",
+    "builder",
+    "schema"
+  ],
+  "license": "MIT",
+  "main": "builder.js",
+  "name": "nimn_schema_builder",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nimndata/nimnjs-schema-builder.git"
+  },
+  "scripts": {
+    "bundle": "browserify builder.js -s nimn-schema-builder -o dist/nimn-schema-builder.js"
+  },
+  "version": "1.1.0"
+}

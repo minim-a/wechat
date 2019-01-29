@@ -1,0 +1,21 @@
+{
+  "name": "log",
+  "version": "1.0.0",
+  "description": "the log module for niot",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "log"
+  ],
+  "author": "xuyuan",
+  "license": "ISC",
+  "dependencies": {
+    "log4js": "^0.6.36"
+  }
+}

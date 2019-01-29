@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="Generated files" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/lib/stores/Memory.js" />
+        <item url="file://$PROJECT_DIR$/lib/Cache.js" />
+        <item url="file://$PROJECT_DIR$/node_modules/unit-parser/lib/systems/time.js" />
+        <item url="file://$PROJECT_DIR$/node_modules/unit-parser/lib/systems/filesize.js" />
+        <item url="file://$PROJECT_DIR$/node_modules/unit-parser/lib/UnitParser.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/stores/Memory.js" />
+      <root url="file://$PROJECT_DIR$/lib/Cache.js" />
+      <root url="file://$PROJECT_DIR$/node_modules/unit-parser/lib/systems/time.js" />
+      <root url="file://$PROJECT_DIR$/node_modules/unit-parser/lib/systems/filesize.js" />
+      <root url="file://$PROJECT_DIR$/node_modules/unit-parser/lib/UnitParser.js" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,14 @@
+{
+  "timeout": 10000,
+  "log": "silent",
+  "debug": {
+    "undead": false,
+    "short_logs": false
+  },
+  "strict": {
+    "result": false,
+    "add": false,
+    "find": true,
+    "maxloop": 11
+  }
+}

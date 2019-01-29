@@ -1,0 +1,14 @@
+<head>
+    <title></title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/weui.min.css"/>
+</head>
+<body>
+<h1>{{message}}</h1>
+<h2>{{error.status}}</h2>
+<pre>{{error.stack}}</pre>
+</body>

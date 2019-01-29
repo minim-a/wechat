@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>访客系统</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/weui.min.css"/>
+</head>
+<body style="height: auto" ontouchstart>
+<div align="center">
+    <h2>访客信息</h2>
+</div>
+
+<script>
+    function toAppointment() {
+        document.form.action="/visitor/appointment";
+    }
+</script>
+<form class="weui-cells_form"  name="form" action="{{action}}" method="post">
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" placeholder="您的姓名" name="name" value="{{name}}" required autofocus/>
+        </div>
+        <div class="weui-cell__hd" >
+            <select class="weui-select" name="select2">
+                <option  value="1">男士</option>
+                <option value="2">女士</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="tel" placeholder="请填写您的手机号"  name="phone" value="{{phone}}">
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="text" placeholder="请填写您公司名称"  name="company" value="{{company}}">
+    </div>
+
+    <div class="weui-cell">
+        <input type="text" name="data" value="{{data}}" style="display:none">
+    </div>
+
+    <div class="weui-flex">
+        <div class="weui-flex__item " align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_primary" type="submit" style="display:{{show}};" onclick="toAppointment();">发起预约</button>
+        </div>
+        <div class="weui-flex__item" align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_default" type="submit" class="btn">{{btn}}</button>
+        </div>
+    </div>
+</form>
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link">Visitor web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+</body>
+</html>

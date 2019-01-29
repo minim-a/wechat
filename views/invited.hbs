@@ -1,0 +1,44 @@
+<head>
+    <title> 邀约 </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<script>
+    function toAppointment() {
+        document.form.action="/visitor/appointment";
+        document.form.submit();    }
+</script>
+
+<form class="form-horizontal"  name="form" action="/inviten/to" method="post">
+    <div class="control-group" align="center">
+        <label> 邀访人信息 </label>
+    </div>
+    <div class="control-group">
+        <div class="controls" align="center">
+            <input type="text" placeholder="邀访人的姓名"  name="visitorName" value="{{visitorName}}" required autofocus>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" > </label>
+        <div class="controls" align="center">
+            <input type="text" placeholder="邀访人的手机号"  name="visitorPhone" value="{{visitorPhone}}">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" > </label>
+        <div class="form-group" align="center">
+            <button type="submit" class="btn">确定</button>
+        </div>
+        <input type="text" name="employeeId" value="{{employeeId}}" style="display:none">
+        <input type="text" name="employeeName" value="{{employeeName}}" style="display:none">
+    </div>
+</form>
+
+</body>
+</html>

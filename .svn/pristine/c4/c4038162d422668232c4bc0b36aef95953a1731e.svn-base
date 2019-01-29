@@ -1,0 +1,68 @@
+{
+  "name": "seneca-redis-transport",
+  "version": "0.3.0",
+  "description": "Seneca Redis transport",
+  "main": "redis-transport.js",
+  "scripts": {
+    "test": "mocha test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rjrodger/seneca-redis-transport.git"
+  },
+  "keywords": [
+    "seneca",
+    "transport",
+    "plugin",
+    "redis",
+    "pubsub",
+    "pub-sub",
+    "publish",
+    "subscribe"
+  ],
+  "author": {
+    "name": "Richard Rodger",
+    "url": "http://richardrodger.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "redis": "~0.12.1",
+    "lodash": "~2.4.1"
+  },
+  "devDependencies": {
+    "mocha": "~2.1.0",
+    "seneca": "plugin",
+    "seneca-transport-test": "~0.1.2"
+  },
+  "files": [
+    "README.md",
+    "LICENSE.txt",
+    "redis-transport.js"
+  ],
+  "gitHead": "e9a9f5c24f3f57873a691a416296ab5c4e52a8af",
+  "bugs": {
+    "url": "https://github.com/rjrodger/seneca-redis-transport/issues"
+  },
+  "homepage": "https://github.com/rjrodger/seneca-redis-transport",
+  "_id": "seneca-redis-transport@0.3.0",
+  "_shasum": "4c3cc79f05afd0a4dcfa778f5a25278539bb4584",
+  "_from": "seneca-redis-transport@latest",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "rjrodger",
+    "email": "richard.rodger@nearform.com"
+  },
+  "maintainers": [
+    {
+      "name": "rjrodger",
+      "email": "richard.rodger@nearform.com"
+    }
+  ],
+  "dist": {
+    "shasum": "4c3cc79f05afd0a4dcfa778f5a25278539bb4584",
+    "tarball": "https://registry.npmjs.org/seneca-redis-transport/-/seneca-redis-transport-0.3.0.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/seneca-redis-transport/-/seneca-redis-transport-0.3.0.tgz",
+  "readme": "ERROR: No README data found!"
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>访客系统</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/stylesheets/weui.min.css"/>
+</head>
+<body style="height: auto" ontouchstart>
+<div align="center">
+    <h2>访客信息</h2>
+</div>
+
+<script>
+    function toAppointment() {
+        document.form.action="/visitor/appointment";
+    }
+</script>
+<form class="weui-cells_form"  name="form" action="/visitor/loadImg" method="post">
+    <div class="weui-cell weui-cell_select weui-cell_select-after">
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" placeholder="您的姓名" name="name" value="{{name}}" required autofocus/>
+        </div>
+        <div class="weui-cell__hd" >
+            <input type="hidden" name="sexInput" value="{{sexInput}}" id="sexInputId"/>
+            <label>
+                <select class="weui-select" name="sex" id="sexSelectId">
+                    <option  value="male">男士</option>
+                    <option value="female">女士</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="tel" placeholder="请填写您的手机号"  name="phone" value="{{phone}}">
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="text" placeholder="请填写您公司名称"  name="company" value="{{company}}">
+    </div>
+
+    <div class="weui-cell">
+        <input class="weui-input" type="text" placeholder="您的身份证号 (选填)"  name="idcard" value="{{idcard}}">
+    </div>
+
+    <div class="weui-cell">
+        <button class="weui-btn weui-btn_mini weui-btn_default" onclick="openCamera()" type="button" >拍照(测试中，请不要点击）</button>
+    </div>
+    <div class="weui-cell">
+        <input type="weui-input" name="mediaId" value="{{mediaId}}" id="mediaId">
+    </div>
+
+    <div class="weui-cell">
+        <input type="text" name="data" value="{{data}}" style="display:none">
+    </div>
+
+    <div class="weui-flex">
+        <div class="weui-flex__item " align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_primary" type="submit" style="display:{{show}};" onclick="toAppointment();">发起预约</button>
+        </div>
+        <div class="weui-flex__item" align="center">
+            <button class="weui-btn weui-btn_mini weui-btn_default" type="submit" class="btn">确认修改</button>
+        </div>
+    </div>
+</form>
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link">Visitor web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+</body>
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+    let sex=document.getElementById("sexInputId").value;
+    sex= (sex==null || sex==undefined || sex=="")?'male':sex;
+    $("#sexSelectId").val(sex);
+</script>
+<script type="text/javascript">
+    !function(){
+        let targetUrl=location.href.split("#")[0];
+        let url = "http://" + location.host + "/wechat/fetchTicket";
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            data: {
+                url:targetUrl,
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("发生错误：" + errorThrown);
+            },
+            success : function(data){
+                init(data)
+            }
+        });
+    }();
+
+    function init(data) {
+        wx.config({
+            debug: false,
+            appId: data.appid,
+            timestamp: data.timestamp,
+            nonceStr: data.noncestr,
+            signature: data.signature,
+            jsApiList: [
+                'checkJsApi',
+                'chooseImage',
+                'uploadImage',
+
+            ]
+        });
+        wx.ready(function () {
+            wx.checkJsApi({
+                jsApiList: [
+                    'getNetworkType',
+                    'previewImage',
+                    'chooseImage'
+                ],
+                success: function (res) {
+                    // alert(JSON.stringify(res));
+                }
+            });
+        });
+    }
+
+
+    function openCamera(){
+        wx.chooseImage({
+            count: 1, // 默认9
+            sizeType: ['original', 'compressed'], // 指定是原图还是压缩图，默认都有
+            sourceType: ['album', 'camera'], // 指定来源是相册还是相机，默认都有
+            success: function (res) {
+                let localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                wx.uploadImage({
+                    localId: localIds.toString(), // 需要上传的图片的ID，由chooseImage接口获得
+                    isShowProgressTips: 1, // 进度提示
+                    success: function (res) {
+                        let mediaId = res.serverId; // 返回图片的服务器端ID，即mediaId
+                        //将获取到的 mediaId 传入后台 方法savePictur
+                        $("#mediaId").val(mediaId);
+
+                    },
+                    fail: function (res) {
+                        alert('图片上传失败，请重试');
+                    }
+                });
+
+            }
+        });
+    }
+</script>
+
+
+</html>

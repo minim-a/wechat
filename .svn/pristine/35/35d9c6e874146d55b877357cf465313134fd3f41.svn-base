@@ -1,0 +1,23 @@
+<head>
+    <title></title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/weui.min.css"/>
+</head>
+<body ontouchstart>
+<div align="center">
+    <h2>{{hint}}</h2>
+    <h3>{{error.status}}</h3>
+    <pre>{{error.stack}}</pre>
+</div>
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link">Erro web</a>
+    </p>
+    <p class="weui-footer__text">Copyright &copy; 2019-2029 </p>
+</div>
+</body>

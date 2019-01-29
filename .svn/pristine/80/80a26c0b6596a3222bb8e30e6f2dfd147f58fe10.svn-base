@@ -1,0 +1,68 @@
+var express = require('express');
+var router = express.Router();
+var _=require('underscore');
+var Visitor = require('../models/visitor.js');
+var Employee= require('../models/employee.js');
+var Record  = require('../models/record.js');
+
+
+router.post('/',function (req,res,net) {
+    let employeeId  =req.body.employeeId;
+    let employeeName =req.body.employeeName;
+    let param={};
+    param.employeeId=employeeId;
+    param.employeeName=employeeName;
+    res.render('invited',param);
+})
+
+/**
+ * 填写邀约信息后，进行邀请
+ */
+router.post('/to',function (req,res,next) {
+    let visitorName=req.body.visitorName;
+    let visitorPhone=req.body.visitorPhone;
+    let employeeId  =req.body.employeeId;
+    let employeeName =req.body.employeeName;
+    Visitor.queryUsers(visitorName,visitorPhone,function (err,result) {
+        if (!err){
+            if (_.isEmpty(result)){
+                // 没有访客人员时，需要创建访客信息
+                Visitor.createUser(visitorName,visitorPhone,"",function (err,result) {
+                    if (!err){
+                        if (!_.isEmpty(result)){
+                            let visitorId=result.id;
+                            let visitorName =result.name;
+                            let visitor={id:visitorId,name:visitorName};
+                            let employee={id:employeeId,name:employeeName};
+                            Record.createAppointment(visitor,employee,function (err,result) {
+                               if (!err && !_.isEmpty(result)){
+                                   console.log("创建邀访记录成功")
+                                   let id=result.id;
+                                   let statue='yes';
+                                   let user=result.employee.id;
+                                   Record.ack(id,statue,user,function (err,result) {
+                                       if (!err && !_.isEmpty(result)){
+                                           console.log("邀约功成");
+                                           res.send("邀约功成");
+                                       }
+                                   })
+                               }
+                            })
+                        }
+                    }
+                })
+            }else{
+                // 已有访客户信息时，
+            }
+
+        }
+    })
+
+})
+
+function createAppointment(result){
+
+}
+
+
+module.exports=router;

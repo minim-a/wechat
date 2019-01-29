@@ -1,0 +1,24 @@
+{
+  "name": "wechat",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.3",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "fast-xml-parser": "^3.12.10",
+    "hbs": "~4.0.1",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "redis": "^2.8.0",
+    "request": "^2.88.0",
+    "seneca": "^3.7.0",
+    "sha1": "^1.1.1",
+    "socket.io": "^2.2.0",
+    "underscore": "^1.9.1"
+  }
+}

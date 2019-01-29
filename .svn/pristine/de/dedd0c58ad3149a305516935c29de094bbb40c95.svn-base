@@ -1,0 +1,128 @@
+<head>
+    <title></title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+
+</head>
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="http://static.runoob.com/assets/qrcode/qrcode.min.js"></script>
+<body ontouchstart>
+<div align="center">
+    <h2 id="hint">{{hint}}</h2>
+</div>
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">访客姓名：</label></div>
+    <div class="weui-cell__bd">
+        <label class="weui-label" style="width: auto;font-size:13px;color:#c7c7c7" >{{visitorName}}</label>
+    </div>
+</div>
+
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">开始时间：</label></div>
+    <div class="weui-cell__bd">
+        <label class="weui-label" style="width: auto; font-size:13px;color:#c7c7c7" >{{beginTime}}</label>
+    </div>
+</div>
+
+<div class="weui-cell">
+    <div class="weui-cell__hd"><label class="weui-label">结束时间：</label></div>
+    <div class="weui-cell__bd">
+        <label class="weui-label" style="width: auto;font-size:13px;color:#c7c7c7" >{{endTime}}</label>
+    </div>
+</div>
+
+<div class="weui-cell">
+    <input class="weui-input" type="text" id="data"  name="data" value="{{data}}" style="display: none">
+    <input class="weui-input" type="text" id="code"  name="code" value="{{code}}" style="display: none">
+</div>
+<div >
+    <div id="qrcode" align="center"></div>
+    <div align="center" style="padding: 5px">
+        <label id ='qrcodeHint' style="padding:0 .34em;font-size:12px;color:#c7c7c7" >
+         到达现场确认后，自动更新为门禁凭证！
+        </label>
+    </div>
+</div>
+
+
+<div class="weui-footer weui-footer_fixed-bottom">
+    <p class="weui-footer__links">
+        <a href="" class="weui-footer__link">Visit Ticket web</a>
+    </p>
+    <p class="weui-footer__text">访客系统 Copyright &copy; 2019-2029 </p>
+</div>
+
+<script>
+    $(document).ready(function() {//页面加载完成后执行此函数
+        let data=document.getElementById("data").value;
+        data=JSON.parse(data);
+        let qrcode=data.qrcode;
+        new QRCode('qrcode', {
+            text: qrcode,
+            width: 256,
+            height: 256,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        if (data.type ==='code'){
+            fresh();
+        }
+    });
+    function fresh() {
+        let targetUrl='http://minima.mynatapp.cc/visitor/flashTicket?';
+        let data=document.getElementById("data").value;
+        data=JSON.parse(data);
+        let qrcode=data.qrcode;
+        $.ajax({
+            url: targetUrl,
+            type:'POST',
+            dataType: 'json',
+            data: {
+                code:qrcode,
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                 alert("发生错误：" + errorThrown);
+            },
+            success : function(data){
+                if(data==null || undefined === data || data.result==false){
+                    if (data.status === 'timeout'){
+                        $('#qrcodeHint').html('更新超时，请到现场确认，或者前台咨询！');
+                    }else {
+                        if (data.status === 'no'){
+                            setTimeout(function(){
+                                fresh();
+                            },5000);
+                        }
+                    }
+                }else{
+                    $('#qrcode').html('');
+                    $('#hint').html('门禁进出凭证');
+                    new QRCode('qrcode', {
+                        text: data.card,
+                        width: 256,
+                        height: 256,
+                        colorDark: '#000000',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            }
+        });
+
+    }
+
+</script>
+</body>
+
+
+
+
+
+

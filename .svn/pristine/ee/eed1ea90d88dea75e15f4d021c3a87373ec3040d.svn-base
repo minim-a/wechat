@@ -1,0 +1,22 @@
+'use strict';
+const fastXmlParser = require('fast-xml-parser');
+
+function xmlToJson(result) {
+    var options = {
+        attrPrefix : "@_",
+        textNodeName : "#text",
+        ignoreNonTextNodeAttr : true,
+        ignoreTextNodeAttr : true,
+        ignoreNameSpace : true,
+        ignoreRootElement : false,
+        textNodeConversion : true,
+        textAttrConversion : false,
+        arrayMode : false
+    };
+    var tObj = fastXmlParser.getTraversalObj(result,options);
+    var jsonObj = fastXmlParser.convertToJson(tObj)
+    return jsonObj
+}
+module.exports = {
+    xmlToJson: xmlToJson
+};
